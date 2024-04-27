@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService{
             user.setEnabled(true);
             userRepository.save(user);
             // after click the link, send a mail with attachment
-            emailService.sendMimeMailWithAttachments(user.getName(), user.getEmail(), "/Users/lxx/Desktop/DIY_Projekte/userservice/src/main/resources/pictures/googlelogo.png");
+            emailService.sendMimeMailWithAttachments(user.getName(), user.getEmail(), "src/main/resources/pictures/googlelogo.png");
             //confirmationRepository.delete(confirmation);
             return Boolean.TRUE;
         } else {
