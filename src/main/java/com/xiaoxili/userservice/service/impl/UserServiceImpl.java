@@ -45,9 +45,15 @@ public class UserServiceImpl implements UserService{
     public Boolean verifyToken(String token) {
         Confirmation confirmation = confirmationRepository.findByToken(token);
         User user = userRepository.findByEmailIgnoreCase(confirmation.getUser().getEmail());
-        user.setEnabled(true);
-        userRepository.save(user);
-        //confirmationRepository.delete(confirmation);
-        return Boolean.TRUE;
+        if (user != null) {
+            user.setEnabled(true);
+            userRepository.save(user);
+            // after click the link, send a mail with attachment
+            emailService.sendMimeMailWithAttachments(user.getName(), user.getEmail(), "/Users/lxx/Desktop/DIY_Projekte/userservice/src/main/resources/pictures/googlelogo.png");
+            //confirmationRepository.delete(confirmation);
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
     }
 }

@@ -1,14 +1,19 @@
 package com.xiaoxili.userservice.service.impl;
 
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.xiaoxili.userservice.service.EmailService;
 import com.xiaoxili.userservice.utils.EmailUtils;
 
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -27,7 +32,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendSimpleMailMessage(String name, String to, String token) {
         try {
             SimpleMailMessage simpleMessage = new SimpleMailMessage();
-            simpleMessage.setSubject("Demo Test for Verify Account");
+            simpleMessage.setSubject("Test for Verify Account");
             simpleMessage.setFrom(fromEmail);
             simpleMessage.setTo(to);
             simpleMessage.setText(EmailUtils.getEmailMessage(name, host, token));
@@ -38,8 +43,22 @@ public class EmailServiceImpl implements EmailService{
     }
 
     @Override
-    public void sendMimeMailWithAttachments(String name, String to, String token) {
-        // TODO Auto-generated method stub
+    public void sendMimeMailWithAttachments(String name, String to, String pathToAttachment) {
+        try {
+            MimeMessage mimeMessage = emailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setSubject("Test for Mail with Attachment");
+            mimeMessageHelper.setFrom(fromEmail);
+            mimeMessageHelper.setTo(to);
+            mimeMessageHelper.setText("Good Job! \n Welcome Onboard! \n");
+
+            FileSystemResource file = new FileSystemResource(new File(pathToAttachment));
+            mimeMessageHelper.addAttachment("Attachment", file);
+
+            emailSender.send(mimeMessage);
+        } catch (Exception e) {
+            throw new RuntimeException("Something wrong while sending attachmens: " + e.getMessage());
+        }
     }
     
 }
